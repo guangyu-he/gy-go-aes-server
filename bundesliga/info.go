@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -80,6 +81,11 @@ func MatchInfo(matchday int) string {
 	}
 
 	for _, match := range responseData.Matches {
+
+		if strings.Contains(match.HomeTeam.Name, "FC Bayern") || strings.Contains(match.AwayTeam.Name, "FC Bayern") {
+			output += "############################################\n"
+		}
+
 		output += fmt.Sprintf("主队: %s\n", match.HomeTeam.Name)
 		output += fmt.Sprintf("客队: %s\n", match.AwayTeam.Name)
 
@@ -93,7 +99,13 @@ func MatchInfo(matchday int) string {
 		output += fmt.Sprintf("比赛时间: %s\n", cetTime)
 
 		output += fmt.Sprintf("比赛状态: %s\n", match.Status)
-		output += fmt.Sprintf("比分: %d - %d\n\n", match.Score.FullTime.HomeTeam, match.Score.FullTime.AwayTeam)
+		output += fmt.Sprintf("比分: %d - %d\n", match.Score.FullTime.HomeTeam, match.Score.FullTime.AwayTeam)
+
+		if strings.Contains(match.HomeTeam.Name, "FC Bayern") || strings.Contains(match.AwayTeam.Name, "FC Bayern") {
+			output += "############################################\n"
+		}
+
+		output += "\n"
 	}
 
 	return output
