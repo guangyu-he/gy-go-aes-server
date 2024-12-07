@@ -17,11 +17,18 @@ type RequestData struct {
 }
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
+
+	log.Println(r.URL.Path, r.URL.Query(), r.Method, r.RemoteAddr)
+
 	if r.Method != http.MethodGet {
+		log.Println("Method not allowed")
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+
 	_, err := fmt.Fprintf(w, "Hello, World!")
 	if err != nil {
 		return
@@ -30,6 +37,8 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 
 func EncryptHandler(w http.ResponseWriter, r *http.Request) {
 
+	log.Println(r.URL.Path, r.URL.Query(), r.Method, r.RemoteAddr)
+
 	type ResponseData struct {
 		Text          string `json:"text"`
 		EncryptedText string `json:"encrypted_text"`
@@ -37,12 +46,14 @@ func EncryptHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method != http.MethodPost {
+		log.Println("Method not allowed")
 		http.Error(w, "Only POST method is supported", http.StatusMethodNotAllowed)
 		return
 	}
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
+		log.Println("Error reading request body")
 		http.Error(w, "Error reading request body", http.StatusInternalServerError)
 		return
 	}
@@ -55,17 +66,20 @@ func EncryptHandler(w http.ResponseWriter, r *http.Request) {
 	var requestData RequestData
 	err = json.Unmarshal(body, &requestData)
 	if err != nil {
+		log.Println("Error parsing JSON")
 		http.Error(w, "Error parsing JSON", http.StatusBadRequest)
 		return
 	}
 
 	if requestData.Key == "" {
+		log.Println("AES Key is empty")
 		http.Error(w, "AES Key is empty", http.StatusBadRequest)
 		return
 	}
 
 	encryptedText, err := aes.AESEncrypt([]byte(requestData.Text), []byte(requestData.Key))
 	if err != nil {
+		log.Println("Error encrypting text")
 		http.Error(w, fmt.Sprintf("Error encrypting text: %s", err), http.StatusInternalServerError)
 		return
 	}
@@ -79,6 +93,7 @@ func EncryptHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	jsonResponse, err := json.Marshal(responseData)
 	if err != nil {
+		log.Println("Error generating JSON response")
 		http.Error(w, "Error generating JSON response", http.StatusInternalServerError)
 		return
 	}
@@ -86,12 +101,15 @@ func EncryptHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(jsonResponse)
 	if err != nil {
+		log.Println("Error writing JSON response")
 		http.Error(w, "Error writing JSON response", http.StatusInternalServerError)
 		return
 	}
 }
 
 func DecryptHandler(w http.ResponseWriter, r *http.Request) {
+
+	log.Println(r.URL.Path, r.URL.Query(), r.Method, r.RemoteAddr)
 
 	type ResponseData struct {
 		Text          string `json:"text"`
@@ -100,12 +118,14 @@ func DecryptHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method != http.MethodPost {
+		log.Println("Method not allowed")
 		http.Error(w, "Only POST method is supported", http.StatusMethodNotAllowed)
 		return
 	}
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
+		log.Println("Error reading request body")
 		http.Error(w, "Error reading request body", http.StatusInternalServerError)
 		return
 	}
@@ -118,17 +138,20 @@ func DecryptHandler(w http.ResponseWriter, r *http.Request) {
 	var requestData RequestData
 	err = json.Unmarshal(body, &requestData)
 	if err != nil {
+		log.Println("Error parsing JSON")
 		http.Error(w, "Error parsing JSON", http.StatusBadRequest)
 		return
 	}
 
 	if requestData.Key == "" {
+		log.Println("AES Key is empty")
 		http.Error(w, "AES Key is empty", http.StatusBadRequest)
 		return
 	}
 
 	decryptedText, err := aes.AESDecrypt(requestData.Text, []byte(requestData.Key))
 	if err != nil {
+		log.Println("Error decrypting text")
 		http.Error(w, fmt.Sprintf("Error encrypting text: %s", err), http.StatusInternalServerError)
 		return
 	}
@@ -142,6 +165,7 @@ func DecryptHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	jsonResponse, err := json.Marshal(responseData)
 	if err != nil {
+		log.Println("Error generating JSON response")
 		http.Error(w, "Error generating JSON response", http.StatusInternalServerError)
 		return
 	}
@@ -152,7 +176,6 @@ func DecryptHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error writing JSON response", http.StatusInternalServerError)
 		return
 	}
-
 }
 
 func BundesLigaHandler(w http.ResponseWriter, r *http.Request) {
@@ -175,6 +198,8 @@ func BundesLigaHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("MatchDay %d - Results fetched\n", MatchDayInt)
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+
+	w.WriteHeader(http.StatusOK)
 	_, err = w.Write([]byte(Result))
 	if err != nil {
 		return
