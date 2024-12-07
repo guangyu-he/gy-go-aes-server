@@ -2,9 +2,10 @@ package aes
 
 import (
 	"fmt"
+	"testing"
 )
 
-func main() {
+func TestAES(t *testing.T) {
 	key := []byte("examplekey123456") // AES-128 (16字节)
 	plainText := "Hello, AES in Golang!"
 
