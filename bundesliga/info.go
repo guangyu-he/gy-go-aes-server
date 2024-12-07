@@ -32,10 +32,61 @@ type Response struct {
 	Matches []Match `json:"matches"`
 }
 
-func MatchInfo(matchday int) string {
-	apiKey := "adfac7e310f6495f99f1c38883718fd0"
-	url := fmt.Sprintf("https://api.football-data.org/v4/competitions/BL1/matches?season=2024&matchday=%d", matchday)
+func LatestMatchDay() string {
 
+	type Competition struct {
+		CurrentSeason struct {
+			CurrentMatchday int `json:"currentMatchday"`
+		} `json:"currentSeason"`
+	}
+
+	apiKey := "adfac7e310f6495f99f1c38883718fd0"
+	url := "https://api.football-data.org/v4/competitions/BL1"
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	req.Header.Set("X-Auth-Token", apiKey)
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if resp.StatusCode != 200 {
+		log.Fatalf("请求失败，状态码：%d\n", resp.StatusCode)
+	}
+
+	var competition Competition
+	err = json.Unmarshal(body, &competition)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return fmt.Sprintf("%d", competition.CurrentSeason.CurrentMatchday)
+}
+
+func MatchInfo(matchday string) string {
+	apiKey := "adfac7e310f6495f99f1c38883718fd0"
+	var url string
+	var isLatestMatchday bool = false
+	if matchday == "latest" {
+		matchday = LatestMatchDay()
+		isLatestMatchday = true
+	}
+
+	url = fmt.Sprintf("https://api.football-data.org/v4/competitions/BL1/matches?season=2024&matchday=%s", matchday)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -73,7 +124,12 @@ func MatchInfo(matchday int) string {
 		log.Fatal(err)
 	}
 
-	output := fmt.Sprintf("Matchday %d - Results:\n", matchday)
+	output := ""
+	if isLatestMatchday {
+		output += fmt.Sprintf("Matchday %s (latest) - Results:\n", matchday)
+	} else {
+		output += fmt.Sprintf("Matchday %s - Results:\n", matchday)
+	}
 
 	cet, err := CETFmt()
 	if err != nil {

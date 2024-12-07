@@ -8,7 +8,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 type RequestData struct {
@@ -188,19 +187,19 @@ func BundesLigaHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	MatchDay := r.URL.Query().Get("matchday")
-	MatchDayInt, err := strconv.Atoi(MatchDay)
-	if err != nil {
-		log.Println("Invalid MatchDay")
-		http.Error(w, "Invalid MatchDay", http.StatusBadRequest)
-		return
-	}
-	Result := bundesliga.MatchInfo(MatchDayInt)
-	log.Printf("MatchDay %d - Results fetched\n", MatchDayInt)
+	//MatchDayInt, err := strconv.Atoi(MatchDay)
+	//if err != nil {
+	//	log.Println("Invalid MatchDay")
+	//	http.Error(w, "Invalid MatchDay", http.StatusBadRequest)
+	//	return
+	//}
+	Result := bundesliga.MatchInfo(MatchDay)
+	log.Printf("MatchDay %s - Results fetched\n", MatchDay)
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write([]byte(Result))
+	_, err := w.Write([]byte(Result))
 	if err != nil {
 		return
 	}
