@@ -18,6 +18,7 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	_, err := fmt.Fprintf(w, "Hello, World!")
 	if err != nil {
 		return
@@ -72,7 +73,7 @@ func EncryptHandler(w http.ResponseWriter, r *http.Request) {
 		Status:        "success",
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	jsonResponse, err := json.Marshal(responseData)
 	if err != nil {
 		http.Error(w, "Error generating JSON response", http.StatusInternalServerError)
@@ -135,7 +136,7 @@ func DecryptHandler(w http.ResponseWriter, r *http.Request) {
 		Status:        "success",
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	jsonResponse, err := json.Marshal(responseData)
 	if err != nil {
 		http.Error(w, "Error generating JSON response", http.StatusInternalServerError)
