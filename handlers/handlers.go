@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gy-go-aes-server/aes"
+	"gy-go-aes-server/bundesliga"
 	"io"
 	"net/http"
 )
@@ -150,4 +151,17 @@ func DecryptHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func BundesLigaHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	result := bundesliga.MatchInfo()
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	_, err := w.Write([]byte(result))
+	if err != nil {
+		return
+	}
 }

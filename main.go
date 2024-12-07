@@ -11,6 +11,7 @@ func main() {
 	http.HandleFunc("/hello", handlers.HelloHandler)
 	http.HandleFunc("/encrypt", handlers.EncryptHandler)
 	http.HandleFunc("/decrypt", handlers.DecryptHandler)
+	http.HandleFunc("/bundesliga", handlers.BundesLigaHandler)
 
 	// 启动服务器
 	log.Println("Starting server on :8888...")
