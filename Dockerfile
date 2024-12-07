@@ -8,8 +8,8 @@ COPY . .
 RUN go build -o server main.go
 
 FROM alpine:latest
-RUN apt-get install -y tzdata
-ENV TZ=Europe/Berlin
+RUN apk add --no-cache tzdata
+RUN ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime && echo "Europe/Berlin" > /etc/timezone
 WORKDIR /app
 COPY --from=builder /app/server .
 
