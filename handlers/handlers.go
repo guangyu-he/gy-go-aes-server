@@ -6,6 +6,7 @@ import (
 	"gy-go-aes-server/aes"
 	"gy-go-aes-server/bundesliga"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -155,24 +156,26 @@ func DecryptHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func BundesLigaHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.URL.Path, r.URL.Query(), r.Method, r.RemoteAddr)
+
 	if r.Method != http.MethodGet {
+		log.Println("Method not allowed")
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// 从request中获取matchday参数
-	matchday := r.URL.Query().Get("matchday")
-	// 将matchday转换为int类型
-	// 如果转换失败，返回错误信息
-	matchdayInt, err := strconv.Atoi(matchday)
+	MatchDay := r.URL.Query().Get("matchday")
+	MatchDayInt, err := strconv.Atoi(MatchDay)
 	if err != nil {
-		http.Error(w, "Invalid matchday", http.StatusBadRequest)
+		log.Println("Invalid MatchDay")
+		http.Error(w, "Invalid MatchDay", http.StatusBadRequest)
 		return
 	}
-	result := bundesliga.MatchInfo(matchdayInt)
+	Result := bundesliga.MatchInfo(MatchDayInt)
+	log.Printf("MatchDay %d - Results fetched\n", MatchDayInt)
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	_, err = w.Write([]byte(result))
+	_, err = w.Write([]byte(Result))
 	if err != nil {
 		return
 	}
