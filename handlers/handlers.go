@@ -7,6 +7,7 @@ import (
 	"gy-go-aes-server/bundesliga"
 	"io"
 	"net/http"
+	"strconv"
 )
 
 type RequestData struct {
@@ -158,9 +159,20 @@ func BundesLigaHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	result := bundesliga.MatchInfo()
+
+	// 从request中获取matchday参数
+	matchday := r.URL.Query().Get("matchday")
+	// 将matchday转换为int类型
+	// 如果转换失败，返回错误信息
+	matchdayInt, err := strconv.Atoi(matchday)
+	if err != nil {
+		http.Error(w, "Invalid matchday", http.StatusBadRequest)
+		return
+	}
+	result := bundesliga.MatchInfo(matchdayInt)
+
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	_, err := w.Write([]byte(result))
+	_, err = w.Write([]byte(result))
 	if err != nil {
 		return
 	}
