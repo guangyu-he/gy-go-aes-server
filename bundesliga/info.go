@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 )
 
 type Match struct {
@@ -73,14 +74,37 @@ func MatchInfo(matchday int) string {
 
 	output := fmt.Sprintf("Matchday %d - Results:\n", matchday)
 
+	cet, err := CETFmt()
+	if err != nil {
+		log.Fatalln("Error loading location:", err)
+	}
+
 	for _, match := range responseData.Matches {
-		//output += fmt.Sprintf("比赛 ID: %d\n", match.ID)
 		output += fmt.Sprintf("主队: %s\n", match.HomeTeam.Name)
 		output += fmt.Sprintf("客队: %s\n", match.AwayTeam.Name)
-		output += fmt.Sprintf("比赛时间(UTC): %s\n", match.UtcDate)
+
+		// parse utctime string to time.Time
+		utcTime, err := time.Parse(time.RFC3339, match.UtcDate)
+		if err != nil {
+			log.Fatalln("Error parsing time:", err)
+		}
+		// convert to CET time
+		cetTime := utcTime.In(cet)
+		output += fmt.Sprintf("比赛时间: %s\n", cetTime)
+
 		output += fmt.Sprintf("比赛状态: %s\n", match.Status)
 		output += fmt.Sprintf("比分: %d - %d\n\n", match.Score.FullTime.HomeTeam, match.Score.FullTime.AwayTeam)
 	}
 
 	return output
+}
+
+func CETFmt() (*time.Location, error) {
+	cet, err := time.LoadLocation("Europe/Berlin")
+	if err != nil {
+		log.Println("Error loading location:", err)
+		return nil, err
+	} else {
+		return cet, nil
+	}
 }
