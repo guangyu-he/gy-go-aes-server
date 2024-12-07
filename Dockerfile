@@ -8,6 +8,8 @@ COPY . .
 RUN go build -o server main.go
 
 FROM alpine:latest
+RUN apt-get install -y tzdata
+ENV TZ=Europe/Berlin
 WORKDIR /app
 COPY --from=builder /app/server .
 
