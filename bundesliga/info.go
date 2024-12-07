@@ -30,9 +30,9 @@ type Response struct {
 	Matches []Match `json:"matches"`
 }
 
-func MatchInfo() string {
+func MatchInfo(matchday int) string {
 	apiKey := "adfac7e310f6495f99f1c38883718fd0"
-	url := "https://api.football-data.org/v4/competitions/BL1/matches?season=2024&matchday=13"
+	url := fmt.Sprintf("https://api.football-data.org/v4/competitions/BL1/matches?season=2024&matchday=%d", matchday)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -71,10 +71,10 @@ func MatchInfo() string {
 		log.Fatal(err)
 	}
 
-	output := fmt.Sprintf("Matchday 13 - Results:\n")
+	output := fmt.Sprintf("Matchday %d - Results:\n", matchday)
 
 	for _, match := range responseData.Matches {
-		output += fmt.Sprintf("比赛 ID: %d\n", match.ID)
+		//output += fmt.Sprintf("比赛 ID: %d\n", match.ID)
 		output += fmt.Sprintf("主队: %s\n", match.HomeTeam.Name)
 		output += fmt.Sprintf("客队: %s\n", match.AwayTeam.Name)
 		output += fmt.Sprintf("比赛时间(UTC): %s\n", match.UtcDate)
