@@ -28,6 +28,7 @@ type Match struct {
 
 type NextMatch struct {
 	ID       int `json:"id"`
+	TeamName string
 	HomeTeam struct {
 		ID    int    `json:"id"`
 		Name  string `json:"name"`

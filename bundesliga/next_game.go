@@ -18,6 +18,13 @@ func NextGame(teamID int) NextMatch {
 
 	var nextMatch NextMatch
 	nextMatch = responseData.Matches[0]
+
+	if nextMatch.HomeTeam.ID == teamID {
+		nextMatch.TeamName = nextMatch.HomeTeam.Name
+	} else {
+		nextMatch.TeamName = nextMatch.AwayTeam.Name
+	}
+
 	nextMatch.HomeTeam.Power = CalculatePower(nextMatch.HomeTeam.ID)
 	nextMatch.AwayTeam.Power = CalculatePower(nextMatch.AwayTeam.ID)
 
