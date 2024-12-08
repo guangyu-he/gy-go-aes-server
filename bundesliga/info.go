@@ -10,31 +10,6 @@ import (
 	"time"
 )
 
-type Match struct {
-	ID       int `json:"id"`
-	HomeTeam struct {
-		ID   int    `json:"id"`
-		Name string `json:"name"`
-	} `json:"homeTeam"`
-	AwayTeam struct {
-		ID   int    `json:"id"`
-		Name string `json:"name"`
-	} `json:"awayTeam"`
-	UtcDate  string `json:"utcDate"`
-	Status   string `json:"status"`
-	MatchDay int    `json:"matchday"`
-	Score    struct {
-		FullTime struct {
-			HomeTeam int `json:"home"`
-			AwayTeam int `json:"away"`
-		} `json:"fullTime"`
-	} `json:"score"`
-}
-
-type Response struct {
-	Matches []Match `json:"matches"`
-}
-
 func Query(url string) []byte {
 	apiKey := "adfac7e310f6495f99f1c38883718fd0"
 
@@ -66,12 +41,6 @@ func Query(url string) []byte {
 }
 
 func LatestMatchDay() string {
-
-	type Competition struct {
-		CurrentSeason struct {
-			CurrentMatchday int `json:"currentMatchday"`
-		} `json:"currentSeason"`
-	}
 
 	apiKey := "adfac7e310f6495f99f1c38883718fd0"
 	url := "https://api.football-data.org/v4/competitions/BL1"
