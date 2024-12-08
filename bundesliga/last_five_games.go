@@ -2,12 +2,14 @@ package bundesliga
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 )
 
-func LastFiveGames() []Match {
+func LastFiveGames(teamID int) []Match {
 
-	body := Query("https://api.football-data.org/v4/teams/5/matches?limit=5&status=FINISHED&season=2024")
+	url := fmt.Sprintf("https://api.football-data.org/v4/teams/%d/matches?limit=5&status=FINISHED&season=2024", teamID)
+	body := Query(url)
 
 	var responseData Response
 	err := json.Unmarshal(body, &responseData)
