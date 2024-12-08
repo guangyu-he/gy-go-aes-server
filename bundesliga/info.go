@@ -35,6 +35,36 @@ type Response struct {
 	Matches []Match `json:"matches"`
 }
 
+func Query(url string) []byte {
+	apiKey := "adfac7e310f6495f99f1c38883718fd0"
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	req.Header.Set("X-Auth-Token", apiKey)
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+		}
+	}(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if resp.StatusCode != 200 {
+		log.Fatalf("请求失败，状态码：%d\n", resp.StatusCode)
+	}
+
+	return body
+}
+
 func LatestMatchDay() string {
 
 	type Competition struct {
