@@ -19,6 +19,11 @@ type Match struct {
 			AwayTeam int `json:"away"`
 		} `json:"fullTime"`
 	} `json:"score"`
+	Winner struct {
+		Name string ""
+		ID   int    ""
+	}
+	Draw bool
 }
 
 type Response struct {

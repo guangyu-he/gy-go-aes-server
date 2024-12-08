@@ -37,6 +37,16 @@ func LastFiveGames() []Match {
 		matchData.Score.FullTime.HomeTeam = int(score["home"].(float64))
 		matchData.Score.FullTime.AwayTeam = int(score["away"].(float64))
 
+		if matchData.Score.FullTime.HomeTeam > matchData.Score.FullTime.AwayTeam {
+			matchData.Winner.Name = matchData.HomeTeam.Name
+			matchData.Winner.ID = matchData.HomeTeam.ID
+		} else if matchData.Score.FullTime.HomeTeam < matchData.Score.FullTime.AwayTeam {
+			matchData.Winner.Name = matchData.AwayTeam.Name
+			matchData.Winner.ID = matchData.AwayTeam.ID
+		} else {
+			matchData.Draw = true
+		}
+
 		ListOfMatches = append(ListOfMatches, matchData)
 	}
 
