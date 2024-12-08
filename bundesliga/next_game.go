@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func NextGame(teamID int) {
+func NextGame(teamID int) NextMatch {
 	url := fmt.Sprintf("https://api.football-data.org/v4/teams/%d/matches?limit=1&status=SCHEDULED&season=2024", teamID)
 	body := Query(url)
 
@@ -25,6 +25,6 @@ func NextGame(teamID int) {
 	nextMatch.Prediction.HomeTeam = nextMatch.HomeTeam.Power
 	nextMatch.Prediction.AwayTeam = nextMatch.AwayTeam.Power
 
-	return
+	return nextMatch
 
 }
