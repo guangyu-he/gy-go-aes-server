@@ -2,52 +2,33 @@ package bundesliga
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 )
 
 func LastFiveGames() []Match {
 
 	body := Query("https://api.football-data.org/v4/teams/5/matches?limit=5&status=FINISHED&season=2024")
 
-	var data map[string]interface{}
-	if err := json.Unmarshal(body, &data); err != nil {
-		fmt.Println("Error decoding JSON:", err)
-		return nil
+	var responseData Response
+	err := json.Unmarshal(body, &responseData)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	ListOfMatches := []Match{}
-	for _, match := range data["matches"].([]interface{}) {
-		var matchData Match
-		matchData.ID = int(match.(map[string]interface{})["id"].(float64))
-		matchData.UtcDate = match.(map[string]interface{})["utcDate"].(string)
-		matchData.Status = match.(map[string]interface{})["status"].(string)
-		matchData.MatchDay = int(match.(map[string]interface{})["matchday"].(float64))
+	var ListOfMatches []Match
+	for _, match := range responseData.Matches {
 
-		homeTeam := match.(map[string]interface{})["homeTeam"].(map[string]interface{})["name"].(string)
-		homeTeamId := int(match.(map[string]interface{})["homeTeam"].(map[string]interface{})["id"].(float64))
-		matchData.HomeTeam.ID = homeTeamId
-		matchData.HomeTeam.Name = homeTeam
-
-		awayTeam := match.(map[string]interface{})["awayTeam"].(map[string]interface{})["name"].(string)
-		awayTeamId := int(match.(map[string]interface{})["awayTeam"].(map[string]interface{})["id"].(float64))
-		matchData.AwayTeam.ID = awayTeamId
-		matchData.AwayTeam.Name = awayTeam
-
-		score := match.(map[string]interface{})["score"].(map[string]interface{})["fullTime"].(map[string]interface{})
-		matchData.Score.FullTime.HomeTeam = int(score["home"].(float64))
-		matchData.Score.FullTime.AwayTeam = int(score["away"].(float64))
-
-		if matchData.Score.FullTime.HomeTeam > matchData.Score.FullTime.AwayTeam {
-			matchData.Winner.Name = matchData.HomeTeam.Name
-			matchData.Winner.ID = matchData.HomeTeam.ID
-		} else if matchData.Score.FullTime.HomeTeam < matchData.Score.FullTime.AwayTeam {
-			matchData.Winner.Name = matchData.AwayTeam.Name
-			matchData.Winner.ID = matchData.AwayTeam.ID
+		if match.Score.FullTime.HomeTeam > match.Score.FullTime.AwayTeam {
+			match.Winner.Name = match.HomeTeam.Name
+			match.Winner.ID = match.HomeTeam.ID
+		} else if match.Score.FullTime.HomeTeam < match.Score.FullTime.AwayTeam {
+			match.Winner.Name = match.AwayTeam.Name
+			match.Winner.ID = match.AwayTeam.ID
 		} else {
-			matchData.Draw = true
+			match.Draw = true
 		}
 
-		ListOfMatches = append(ListOfMatches, matchData)
+		ListOfMatches = append(ListOfMatches, match)
 	}
 
 	return ListOfMatches
