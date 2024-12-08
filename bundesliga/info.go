@@ -13,14 +13,17 @@ import (
 type Match struct {
 	ID       int `json:"id"`
 	HomeTeam struct {
+		ID   int    `json:"id"`
 		Name string `json:"name"`
 	} `json:"homeTeam"`
 	AwayTeam struct {
+		ID   int    `json:"id"`
 		Name string `json:"name"`
 	} `json:"awayTeam"`
-	UtcDate string `json:"utcDate"`
-	Status  string `json:"status"`
-	Score   struct {
+	UtcDate  string `json:"utcDate"`
+	Status   string `json:"status"`
+	MatchDay int    `json:"matchday"`
+	Score    struct {
 		FullTime struct {
 			HomeTeam int `json:"home"`
 			AwayTeam int `json:"away"`
