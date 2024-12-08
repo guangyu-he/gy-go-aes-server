@@ -228,13 +228,17 @@ func BundesLigaGuessHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid TeamID", http.StatusBadRequest)
 		return
 	}
-	Result := bundesliga.NextGame(TeamIDInt)
+	nextGameResult, err := bundesliga.NextGame(TeamIDInt)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, fmt.Sprintf("Error fetching next game for team %s: %s", TeamID, err), http.StatusInternalServerError)
+	}
 	log.Printf("Next game for team %s - Prediction fetched\n", TeamID)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	responseData := ResponseData{
-		Json:   Result,
+		Json:   nextGameResult,
 		Status: "success",
 	}
 	jsonResponse, err := json.Marshal(responseData)
