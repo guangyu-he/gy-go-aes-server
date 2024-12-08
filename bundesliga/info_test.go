@@ -1,8 +1,12 @@
 package bundesliga
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestInfo(t *testing.T) {
-	MatchInfo(13)
+	result := MatchInfo("13")
+	fmt.Println(result)
 	return
 }
