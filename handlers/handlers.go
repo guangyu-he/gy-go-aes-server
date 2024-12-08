@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type RequestData struct {
@@ -203,4 +204,50 @@ func BundesLigaHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+}
+
+func BundesLigaGuessHandler(w http.ResponseWriter, r *http.Request) {
+
+	type ResponseData struct {
+		Json   interface{} `json:"json"`
+		Status string      `json:"status"`
+	}
+
+	log.Println(r.URL.Path, r.URL.Query(), r.Method, r.RemoteAddr)
+
+	if r.Method != http.MethodGet {
+		log.Println("Method not allowed")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	TeamID := r.URL.Query().Get("teamid")
+	TeamIDInt, err := strconv.Atoi(TeamID)
+	if err != nil {
+		log.Println("Invalid TeamID")
+		http.Error(w, "Invalid TeamID", http.StatusBadRequest)
+		return
+	}
+	Result := bundesliga.NextGame(TeamIDInt)
+	log.Printf("Next game for team %s - Prediction fetched\n", TeamID)
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+	responseData := ResponseData{
+		Json:   Result,
+		Status: "success",
+	}
+	jsonResponse, err := json.Marshal(responseData)
+	if err != nil {
+		log.Println("Error generating JSON response")
+		http.Error(w, "Error generating JSON response", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	_, err = w.Write(jsonResponse)
+	if err != nil {
+		return
+	}
+
 }
