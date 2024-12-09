@@ -5,10 +5,20 @@ type Match struct {
 	HomeTeam struct {
 		ID   int    `json:"id"`
 		Name string `json:"name"`
+		Win  bool
+		Draw bool
+		GD   int
+		GS   int
+		GA   int
 	} `json:"homeTeam"`
 	AwayTeam struct {
 		ID   int    `json:"id"`
 		Name string `json:"name"`
+		Win  bool
+		Draw bool
+		GD   int
+		GS   int
+		GA   int
 	} `json:"awayTeam"`
 	UtcDate  string `json:"utcDate"`
 	Status   string `json:"status"`
@@ -19,11 +29,6 @@ type Match struct {
 			AwayTeam int `json:"away"`
 		} `json:"fullTime"`
 	} `json:"score"`
-	Winner struct {
-		Name string ""
-		ID   int    ""
-	}
-	Draw bool
 }
 
 type NextMatch struct {

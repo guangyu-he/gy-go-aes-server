@@ -24,13 +24,33 @@ func LastFiveGames(teamID int) ([]Match, error) {
 	var ListOfMatches []Match
 	for _, match := range responseData.Matches {
 		if match.Score.FullTime.HomeTeam > match.Score.FullTime.AwayTeam {
-			match.Winner.Name = match.HomeTeam.Name
-			match.Winner.ID = match.HomeTeam.ID
+			match.HomeTeam.Win = true
+			match.HomeTeam.GD = match.Score.FullTime.HomeTeam - match.Score.FullTime.AwayTeam
+			match.HomeTeam.GS = match.Score.FullTime.HomeTeam
+			match.HomeTeam.GA = match.Score.FullTime.AwayTeam
+
+			match.AwayTeam.GD = match.Score.FullTime.AwayTeam - match.Score.FullTime.HomeTeam
+			match.AwayTeam.GS = match.Score.FullTime.AwayTeam
+			match.AwayTeam.GA = match.Score.FullTime.HomeTeam
 		} else if match.Score.FullTime.HomeTeam < match.Score.FullTime.AwayTeam {
-			match.Winner.Name = match.AwayTeam.Name
-			match.Winner.ID = match.AwayTeam.ID
+			match.AwayTeam.Win = true
+			match.AwayTeam.GD = match.Score.FullTime.AwayTeam - match.Score.FullTime.HomeTeam
+			match.AwayTeam.GS = match.Score.FullTime.AwayTeam
+			match.AwayTeam.GA = match.Score.FullTime.HomeTeam
+
+			match.HomeTeam.GD = match.Score.FullTime.HomeTeam - match.Score.FullTime.AwayTeam
+			match.HomeTeam.GS = match.Score.FullTime.HomeTeam
+			match.HomeTeam.GA = match.Score.FullTime.AwayTeam
 		} else {
-			match.Draw = true
+			match.HomeTeam.Draw = true
+			match.AwayTeam.Draw = true
+			match.HomeTeam.GD = 0
+			match.HomeTeam.GS = match.Score.FullTime.HomeTeam
+			match.HomeTeam.GA = match.Score.FullTime.AwayTeam
+
+			match.AwayTeam.GD = 0
+			match.AwayTeam.GS = match.Score.FullTime.AwayTeam
+			match.AwayTeam.GA = match.Score.FullTime.HomeTeam
 		}
 		ListOfMatches = append(ListOfMatches, match)
 	}
