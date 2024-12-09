@@ -194,13 +194,18 @@ func BundesLigaHandler(w http.ResponseWriter, r *http.Request) {
 	//	http.Error(w, "Invalid MatchDay", http.StatusBadRequest)
 	//	return
 	//}
-	Result := bundesliga.MatchInfo(MatchDay)
+	result, err := bundesliga.MatchDayInfo(MatchDay)
+	if err != nil {
+		log.Printf("Error fetching matchday %s: %s\n", MatchDay, err)
+		http.Error(w, fmt.Sprintf("Error fetching matchday %s: %s", MatchDay, err), http.StatusInternalServerError)
+		return
+	}
 	log.Printf("MatchDay %s - Results fetched\n", MatchDay)
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 
 	w.WriteHeader(http.StatusOK)
-	_, err := w.Write([]byte(Result))
+	_, err = w.Write([]byte(result))
 	if err != nil {
 		return
 	}
