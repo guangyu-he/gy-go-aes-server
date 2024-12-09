@@ -10,5 +10,5 @@ func TestNextGame(t *testing.T) {
 	if result.TeamName != "FC Bayern München" {
 		t.Errorf("Expected: FC Bayern München, Got: %s", result.TeamName)
 	}
-	return
+	t.Logf("Next game of %s: %s (H) vs %s (A)", result.TeamName, result.HomeTeam.Name, result.AwayTeam.Name)
 }

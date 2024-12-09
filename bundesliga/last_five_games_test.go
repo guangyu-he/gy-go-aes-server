@@ -10,6 +10,7 @@ func TestLastFiveGames(t *testing.T) {
 	if len(result) != 5 {
 		t.Errorf("Expected 5 matches, got %d", len(result))
 	}
-	fmt.Println(result)
-	return
+	for _, match := range result {
+		fmt.Println(match)
+	}
 }
