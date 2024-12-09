@@ -15,10 +15,13 @@ func getTeamName(nextMatch NextMatch, teamID int) string {
 
 func NextGame(teamID int) (NextMatch, error) {
 	url := fmt.Sprintf("https://api.football-data.org/v4/teams/%d/matches?limit=1&status=SCHEDULED&season=2024", teamID)
-	body := Query(url)
+	body, err := RequestGet(url)
+	if err != nil {
+		return NextMatch{}, err
+	}
 
 	var responseData ResponseNextMatch
-	err := json.Unmarshal(body, &responseData)
+	err = json.Unmarshal(body, &responseData)
 	if err != nil {
 		log.Println(err)
 		return NextMatch{}, fmt.Errorf("failed to unmarshal response: %w", err)
