@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/rand/v2"
+	"math/rand"
+	"time"
 )
 
 func getTeamName(nextMatch NextMatch, teamID int) string {
@@ -73,9 +74,25 @@ func NextGame(teamID int) (NextMatch, error) {
 		nextMatch.AwayTeam.Power = 3
 	}
 
-	// give random int number from 0 to power
-	nextMatch.Prediction.HomeTeam = rand.IntN(nextMatch.HomeTeam.Power + 1)
-	nextMatch.Prediction.AwayTeam = rand.IntN(nextMatch.AwayTeam.Power + 1)
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	optionRandom := []int{-1, 0, 1}
+	var optionHome []int
+	for i := 0; i <= nextMatch.HomeTeam.Power; i++ {
+		optionHome = append(optionHome, i)
+	}
+	nextMatch.Prediction.HomeTeam = optionHome[r.Intn(len(optionHome))] + optionRandom[r.Intn(len(optionRandom))]
+	var optionAway []int
+	for i := 0; i <= nextMatch.AwayTeam.Power; i++ {
+		optionAway = append(optionAway, i)
+	}
+	nextMatch.Prediction.AwayTeam = optionAway[r.Intn(len(optionAway))] + optionRandom[r.Intn(len(optionRandom))]
+
+	if nextMatch.Prediction.HomeTeam < 0 {
+		nextMatch.Prediction.HomeTeam = 0
+	}
+	if nextMatch.Prediction.AwayTeam < 0 {
+		nextMatch.Prediction.AwayTeam = 0
+	}
 
 	return nextMatch, nil
 }
