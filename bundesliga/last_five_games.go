@@ -6,20 +6,23 @@ import (
 	"log"
 )
 
-func LastFiveGames(teamID int) []Match {
+func LastFiveGames(teamID int) ([]Match, error) {
 
 	url := fmt.Sprintf("https://api.football-data.org/v4/teams/%d/matches?limit=5&status=FINISHED&season=2024", teamID)
-	body := Query(url)
+	body, err := RequestGet(url)
+	if err != nil {
+		return []Match{}, err
+	}
 
 	var responseData Response
-	err := json.Unmarshal(body, &responseData)
+	err = json.Unmarshal(body, &responseData)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return []Match{}, err
 	}
 
 	var ListOfMatches []Match
 	for _, match := range responseData.Matches {
-
 		if match.Score.FullTime.HomeTeam > match.Score.FullTime.AwayTeam {
 			match.Winner.Name = match.HomeTeam.Name
 			match.Winner.ID = match.HomeTeam.ID
@@ -29,9 +32,8 @@ func LastFiveGames(teamID int) []Match {
 		} else {
 			match.Draw = true
 		}
-
 		ListOfMatches = append(ListOfMatches, match)
 	}
 
-	return ListOfMatches
+	return ListOfMatches, nil
 }

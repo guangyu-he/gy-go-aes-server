@@ -6,7 +6,7 @@ import (
 )
 
 func TestLastFiveGames(t *testing.T) {
-	result := LastFiveGames(5) // Bayern Munich
+	result, _ := LastFiveGames(5) // Bayern Munich
 	if len(result) != 5 {
 		t.Errorf("Expected 5 matches, got %d", len(result))
 	}
