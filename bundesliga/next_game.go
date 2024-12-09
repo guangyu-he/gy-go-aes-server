@@ -80,10 +80,18 @@ func NextGame(teamID int) (NextMatch, error) {
 	for i := 0; i <= nextMatch.HomeTeam.Power; i++ {
 		optionHome = append(optionHome, i)
 	}
+	if len(optionHome) == 1 && optionHome[0] == 0 {
+		// add more surprise factor
+		optionHome = append(optionHome, 1)
+	}
 	nextMatch.Prediction.HomeTeam = optionHome[r.Intn(len(optionHome))] + optionRandom[r.Intn(len(optionRandom))]
+
 	var optionAway []int
 	for i := 0; i <= nextMatch.AwayTeam.Power; i++ {
 		optionAway = append(optionAway, i)
+	}
+	if len(optionAway) == 1 && optionAway[0] == 0 {
+		optionAway = append(optionAway, 1)
 	}
 	nextMatch.Prediction.AwayTeam = optionAway[r.Intn(len(optionAway))] + optionRandom[r.Intn(len(optionRandom))]
 
