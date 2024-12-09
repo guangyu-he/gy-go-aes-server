@@ -10,6 +10,7 @@ var ApiKey string
 func init() {
 	ApiKey = os.Getenv("FOOTBALL_DATA_API")
 	if ApiKey == "" {
-		log.Fatalf("FOOTBALL_DATA_API is not set")
+		log.Printf("FOOTBALL_DATA_API is not set")
+		ApiKey = "adfac7e310f6495f99f1c38883718fd0"
 	}
 }
